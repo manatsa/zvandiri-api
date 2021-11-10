@@ -1,0 +1,49 @@
+/*
+ * Copyright 2016 Judge Muzinda.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package zw.org.zvandiri.business.repo;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.format.annotation.DateTimeFormat;
+import zw.org.zvandiri.business.domain.SupportGroup;
+
+import java.util.Date;
+import java.util.List;
+
+
+/**
+ *
+ * @author manatsachinyeruse@gmail.com
+ */
+
+public interface SupportGroupRepo extends CrudRepository<SupportGroup, String> {
+
+    @Query(value = "from SupportGroup  t where t.dateCreated between :start and :end")
+    List<SupportGroup> findAll(@Param("start")  @DateTimeFormat(pattern = "dd-MM-yyyy") Date start,
+                          @Param("end") @DateTimeFormat(pattern = "dd-MM-yyyy") Date end, Pageable pageable);
+
+    @Query(value = "from SupportGroup  f  inner join fetch " +
+            "f.district d left join fetch d.province p where p.name=:province ")
+    List<SupportGroup> findAllByProvince(@Param("province") String province, Pageable pageable);
+
+    @Query(value = "from SupportGroup  f  inner join fetch" +
+            " f.district d where d.name=:district  ")
+    List<SupportGroup> findAllByDistrict(@Param("district") String district, Pageable pageable);
+
+
+}
